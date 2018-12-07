@@ -74,7 +74,7 @@ public class NetworkTask extends AsyncTask<String, Integer, Response> {
         Log.d(TAG, "[onPostExecute]");
         super.onPostExecute(response);
         if (this.networkRequestStatusListener != null) {
-            this.networkRequestStatusListener.onStatusChange(STATUS_FINISH, true);
+            this.networkRequestStatusListener.onStatusChange(STATUS_FINISH, response.isSuccess());
         }
     }
 
@@ -97,7 +97,7 @@ public class NetworkTask extends AsyncTask<String, Integer, Response> {
         Log.d(TAG, "[onCancelled]");
         super.onCancelled(s);
         if (this.networkRequestStatusListener != null) {
-            this.networkRequestStatusListener.onStatusChange(STATUS_CANCEL, true);
+            this.networkRequestStatusListener.onStatusChange(STATUS_CANCEL, s.isSuccess());
         }
     }
 

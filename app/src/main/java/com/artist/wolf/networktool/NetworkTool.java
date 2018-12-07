@@ -51,7 +51,7 @@ public class NetworkTool extends NetworkResponseCallback implements NetworkReque
     }
 
     @Override
-    protected void onResponse(Response response) {
+    public void onResponse(Response response) {
         Log.d(TAG, "[onResponse]");
         if (this.networkResponseCallback != null) {
             this.networkResponseCallback.onResponse(response);
