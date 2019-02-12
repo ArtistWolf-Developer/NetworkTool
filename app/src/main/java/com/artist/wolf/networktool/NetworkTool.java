@@ -1,7 +1,6 @@
 package com.artist.wolf.networktool;
 
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.util.Log;
 
 import com.artist.wolf.networktool.domain.Request;
@@ -65,25 +64,24 @@ public class NetworkTool extends NetworkResponseCallback implements NetworkReque
     public NetworkTool init(String domain) {
         this.domain = domain;
         this.timeout = Request.DEFAULT_TIMEOUT;
-        this.headers = new HashMap<>();
-        this.cacheNetworkTasks = new HashMap<>();
+        if (this.headers == null) {
+            this.headers = new HashMap<>();
+        }
+
+        if (this.cacheNetworkTasks == null) {
+            this.cacheNetworkTasks = new HashMap<>();
+        }
         return this;
     }
 
     public NetworkTool init(String domain, int timeout) {
         init(domain);
-        this.domain = domain;
         this.timeout = timeout;
-        this.headers = new HashMap<>();
-        this.cacheNetworkTasks = new HashMap<>();
         return this;
     }
 
     public NetworkTool init(String domain, int timeout, HostnameVerifier hostnameVerifier, String sslProtocol, X509TrustManager x509TrustManager) {
-        this.domain = domain;
-        this.timeout = timeout;
-        this.headers = new HashMap<>();
-        this.cacheNetworkTasks = new HashMap<>();
+        init(domain, timeout);
         SecurityProtocolConfig.getInsntance().init(hostnameVerifier, sslProtocol, x509TrustManager);
         return this;
     }
@@ -98,74 +96,112 @@ public class NetworkTool extends NetworkResponseCallback implements NetworkReque
         return this;
     }
 
-    public void get(String aipUrl, NetworkResponseCallback networkResponseCallback) {
+    public void get(boolean isMulti, String aipUrl, NetworkResponseCallback networkResponseCallback) {
         this.networkResponseCallback = networkResponseCallback;
+        this.networkRequestStatusListener = null;
         Request request = new Request(Request.RestfulAPI.GET, aipUrl);
-        connect(aipUrl, request);
+        connect(isMulti, aipUrl, request);
     }
 
-    public void get(String aipUrl, NetworkResponseCallback networkResponseCallback, NetworkRequestStatusListener networkRequestStatusListener) {
-        this.networkRequestStatusListener = networkRequestStatusListener;
-        get(aipUrl, networkResponseCallback);
-    }
-
-    public void post(String aipUrl, NetworkResponseCallback networkResponseCallback) {
+    public void get(boolean isMulti, String aipUrl, NetworkResponseCallback networkResponseCallback, NetworkRequestStatusListener networkRequestStatusListener) {
         this.networkResponseCallback = networkResponseCallback;
+        this.networkRequestStatusListener = networkRequestStatusListener;
+        Request request = new Request(Request.RestfulAPI.GET, aipUrl);
+        connect(isMulti, aipUrl, request);
+    }
+
+    public void post(boolean isMulti, String aipUrl, NetworkResponseCallback networkResponseCallback) {
+        this.networkResponseCallback = networkResponseCallback;
+        this.networkRequestStatusListener = null;
         Request request = new Request(Request.RestfulAPI.POST, aipUrl);
-        connect(aipUrl, request);
+        connect(isMulti, aipUrl, request);
     }
 
-    public void post(String aipUrl, NetworkResponseCallback networkResponseCallback, NetworkRequestStatusListener networkRequestStatusListener) {
-        this.networkRequestStatusListener = networkRequestStatusListener;
-        post(aipUrl, networkResponseCallback);
-    }
-
-    public void post(String aipUrl, String body, NetworkResponseCallback networkResponseCallback, NetworkRequestStatusListener networkRequestStatusListener) {
-        this.networkRequestStatusListener = networkRequestStatusListener;
+    public void post(boolean isMulti, String aipUrl, String body, NetworkResponseCallback networkResponseCallback) {
         this.networkResponseCallback = networkResponseCallback;
+        this.networkRequestStatusListener = null;
         Request request = new Request(Request.RestfulAPI.POST, aipUrl);
         request.setBody(body);
-        connect(aipUrl, request);
+        connect(isMulti, aipUrl, request);
     }
 
-    public void post(String aipUrl, File file, NetworkResponseCallback networkResponseCallback, NetworkRequestStatusListener networkRequestStatusListener) {
-        this.networkRequestStatusListener = networkRequestStatusListener;
+    public void post(boolean isMulti, String aipUrl, File file, NetworkResponseCallback networkResponseCallback) {
         this.networkResponseCallback = networkResponseCallback;
+        this.networkRequestStatusListener = null;
         Request request = new Request(Request.RestfulAPI.POST, aipUrl);
         request.setFile(file);
-        connect(aipUrl, request);
+        connect(isMulti, aipUrl, request);
     }
 
-    public void put(String aipUrl, NetworkResponseCallback networkResponseCallback) {
+    public void post(boolean isMulti, String aipUrl, NetworkResponseCallback networkResponseCallback, NetworkRequestStatusListener networkRequestStatusListener) {
         this.networkResponseCallback = networkResponseCallback;
-        Request request = new Request(Request.RestfulAPI.PUT, aipUrl);
-        connect(aipUrl, request);
-    }
-
-    public void put(String aipUrl, NetworkResponseCallback networkResponseCallback, NetworkRequestStatusListener networkRequestStatusListener) {
         this.networkRequestStatusListener = networkRequestStatusListener;
-        put(aipUrl, networkResponseCallback);
+        Request request = new Request(Request.RestfulAPI.POST, aipUrl);
+        connect(isMulti, aipUrl, request);
     }
 
-    public void put(String aipUrl, String body, NetworkResponseCallback networkResponseCallback) {
+    public void post(boolean isMulti, String aipUrl, String body, NetworkResponseCallback networkResponseCallback, NetworkRequestStatusListener networkRequestStatusListener) {
         this.networkResponseCallback = networkResponseCallback;
+        this.networkRequestStatusListener = networkRequestStatusListener;
+        Request request = new Request(Request.RestfulAPI.POST, aipUrl);
+        request.setBody(body);
+        connect(isMulti, aipUrl, request);
+    }
+
+    public void post(boolean isMulti, String aipUrl, File file, NetworkResponseCallback networkResponseCallback, NetworkRequestStatusListener networkRequestStatusListener) {
+        this.networkResponseCallback = networkResponseCallback;
+        this.networkRequestStatusListener = networkRequestStatusListener;
+        Request request = new Request(Request.RestfulAPI.POST, aipUrl);
+        request.setFile(file);
+        connect(isMulti, aipUrl, request);
+    }
+
+    public void put(boolean isMulti, String aipUrl, NetworkResponseCallback networkResponseCallback) {
+        this.networkResponseCallback = networkResponseCallback;
+        this.networkRequestStatusListener = null;
+        Request request = new Request(Request.RestfulAPI.PUT, aipUrl);
+        connect(isMulti, aipUrl, request);
+    }
+
+    public void put(boolean isMulti, String aipUrl, NetworkResponseCallback networkResponseCallback, NetworkRequestStatusListener networkRequestStatusListener) {
+        this.networkResponseCallback = networkResponseCallback;
+        this.networkRequestStatusListener = networkRequestStatusListener;
+        Request request = new Request(Request.RestfulAPI.PUT, aipUrl);
+        connect(isMulti, aipUrl, request);
+    }
+
+    public void put(boolean isMulti, String aipUrl, String body, NetworkResponseCallback networkResponseCallback) {
+        this.networkResponseCallback = networkResponseCallback;
+        this.networkRequestStatusListener = null;
         Request request = new Request(Request.RestfulAPI.PUT, aipUrl);
         request.setBody(body);
-        connect(aipUrl, request);
+        connect(isMulti, aipUrl, request);
     }
 
-    public void delete(String aipUrl, NetworkResponseCallback networkResponseCallback) {
+    public void put(boolean isMulti, String aipUrl, String body, NetworkResponseCallback networkResponseCallback, NetworkRequestStatusListener networkRequestStatusListener) {
         this.networkResponseCallback = networkResponseCallback;
-        Request request = new Request(Request.RestfulAPI.DELETE, aipUrl);
-        connect(aipUrl, request);
-    }
-
-    public void delete(String aipUrl, NetworkResponseCallback networkResponseCallback, NetworkRequestStatusListener networkRequestStatusListener) {
         this.networkRequestStatusListener = networkRequestStatusListener;
-        delete(aipUrl, networkResponseCallback);
+        this.networkRequestStatusListener = null;
+        Request request = new Request(Request.RestfulAPI.PUT, aipUrl);
+        request.setBody(body);
+        connect(isMulti, aipUrl, request);
     }
 
-    private void connect(String aipUrl, Request request) {
+    public void delete(boolean isMulti, String aipUrl, NetworkResponseCallback networkResponseCallback) {
+        this.networkResponseCallback = networkResponseCallback;
+        this.networkRequestStatusListener = null;
+        Request request = new Request(Request.RestfulAPI.DELETE, aipUrl);
+        connect(isMulti, aipUrl, request);
+    }
+
+    public void delete(boolean isMulti, String aipUrl, NetworkResponseCallback networkResponseCallback, NetworkRequestStatusListener networkRequestStatusListener) {
+        this.networkResponseCallback = networkResponseCallback;
+        this.networkRequestStatusListener = networkRequestStatusListener;
+        Request request = new Request(Request.RestfulAPI.DELETE, aipUrl);
+        connect(isMulti, aipUrl, request);
+    }
+
+    private void connect(boolean isMulti, String aipUrl, Request request) {
         request.setTimeout(this.timeout);
 
         NetworkTask networkTask = new NetworkTask(this,
@@ -174,6 +210,11 @@ public class NetworkTool extends NetworkResponseCallback implements NetworkReque
                 this.headers);
 
         this.cacheNetworkTasks.put(aipUrl, networkTask);
-        networkTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, this.domain + aipUrl);
+
+        if (isMulti) {
+            networkTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, this.domain + aipUrl);
+        } else {
+            networkTask.execute(this.domain + aipUrl);
+        }
     }
 }
